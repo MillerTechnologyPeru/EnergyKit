@@ -7,7 +7,14 @@
 
 import Foundation
 
-public final class Controller {
+/// Energy Controller
+public struct Controller: EnergyDeviceProtocol, Codable, Equatable, Hashable {
     
+    public static var deviceType: EnergyDeviceType { return .controller }
     
+    /// Device identifier.
+    public let identifier: UUID
+    
+    /// Accessory name.
+    public let name: String
 }

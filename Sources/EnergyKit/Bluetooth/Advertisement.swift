@@ -33,7 +33,7 @@ public extension BluetoothHostControllerInterface {
         do { try enableLowEnergyAdvertising(false) }
         catch HCIError.commandDisallowed { }
         
-        let serviceUUID: GAPIncompleteListOf128BitServiceClassUUIDs = [UUID(bluetooth: DeviceService.uuid)]
+        let serviceUUID: GAPIncompleteListOf128BitServiceClassUUIDs = [UUID(bluetooth: EnergyService.uuid)]
         
         let encoder = GAPDataEncoder()
         let data = try encoder.encodeAdvertisingData(serviceUUID)

@@ -8,9 +8,9 @@
 import Foundation
 
 /// Powered accessory that consumes energy.
-public struct Accessory: Device, Codable, Equatable, Hashable {
+public struct Accessory: EnergyDeviceProtocol, Codable, Equatable, Hashable {
     
-    public static var deviceKind: DeviceKind { return .accessory }
+    public static var deviceType: EnergyDeviceType { return .accessory }
     
     /// Device identifier.
     public let identifier: UUID
@@ -22,10 +22,7 @@ public struct Accessory: Device, Codable, Equatable, Hashable {
     public let voltage: VoltageSystem
     
     /// Category of the accessory.
-    public let category: Category
-    
-    /// Identifier of the accessories' power source.
-    public let powerSource: UUID
+    public let type: AccessoryType
     
     /// Watts currently consuming.
     public var watts: UInt16
@@ -36,20 +33,17 @@ public struct Accessory: Device, Codable, Equatable, Hashable {
 
 // MARK: - Supporting Types
 
-public extension Accessory {
+public enum AccessoryType: UInt8, Codable {
     
-    enum Category: UInt8, Codable {
-        
-        /// Standard wall outlet
-        case outlet     = 0x01
-        
-        /// Lighting
-        case light      = 0x02
-        
-        /// House electric appliance
-        case appliance  = 0x03
-        
-        /// Utility (e.g. water pump)
-        case utility    = 0x04
-    }
+    /// Standard wall outlet
+    case outlet     = 0x01
+    
+    /// Lighting
+    case light      = 0x02
+    
+    /// House electric appliance
+    case appliance  = 0x03
+    
+    /// Utility (e.g. water pump)
+    case utility    = 0x04
 }

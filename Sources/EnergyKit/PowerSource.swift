@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  PowerSource.swift
 //  
 //
 //  Created by Alsey Coleman Miller on 4/9/20.
@@ -8,9 +8,9 @@
 import Foundation
 
 /// Power Source Device
-public struct PowerSource: Device, Codable, Equatable, Hashable {
+public struct PowerSource: EnergyDeviceProtocol, Codable, Equatable, Hashable {
     
-    public static var deviceKind: DeviceKind { return .powerSource }
+    public static var deviceType: EnergyDeviceType { return .powerSource }
     
     /// Device identifier.
     public let identifier: UUID
@@ -25,13 +25,25 @@ public struct PowerSource: Device, Codable, Equatable, Hashable {
     public let category: Category
     
     /// Output active power
-    public var outputActivePower: UInt
+    public var outputActivePower: UInt16
     
     /// Output load percent. 
-    public var outputLoadPercent: UInt
+    public var outputLoadPercent: UInt8
 }
 
 // MARK: - Supporting Types
+
+public protocol PowerSourceProtocol: EnergyDeviceProtocol {
+    
+    /// Category of the power source.
+    static var category: PowerSource.Category { get }
+    
+    /// Output active power
+    var outputActivePower: UInt16 { get }
+    
+    /// Output load percent.
+    var outputLoadPercent: UInt8 { get }
+}
 
 public extension PowerSource {
     
