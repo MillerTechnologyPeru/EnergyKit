@@ -18,7 +18,7 @@ public extension BluetoothHostControllerInterface {
         do { try enableLowEnergyAdvertising(false) }
         catch HCIError.commandDisallowed { }
         
-        let beacon = AppleBeacon(uuid: lock, rssi: rssi)
+        let beacon = AppleBeacon(uuid: identifier, rssi: rssi)
         let flags: GAPFlags = [.lowEnergyGeneralDiscoverableMode, .notSupportedBREDR]
         
         try iBeacon(beacon, flags: flags, interval: .min, timeout: commandTimeout)
@@ -33,11 +33,10 @@ public extension BluetoothHostControllerInterface {
         do { try enableLowEnergyAdvertising(false) }
         catch HCIError.commandDisallowed { }
         
-        let name: GAPCompleteLocalName = "Lock"
         let serviceUUID: GAPIncompleteListOf128BitServiceClassUUIDs = [UUID(bluetooth: LockService.uuid)]
         
         let encoder = GAPDataEncoder()
-        let data = try encoder.encodeAdvertisingData(name, serviceUUID)
+        let data = try encoder.encodeAdvertisingData(serviceUUID)
         
         try setLowEnergyScanResponse(data, timeout: commandTimeout)
         
