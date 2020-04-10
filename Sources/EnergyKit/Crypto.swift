@@ -18,7 +18,7 @@ internal func random(_ size: Int) -> Data {
 }
 
 internal let HMACSize = 64
-/*
+
 /// Performs HMAC with the specified key and message.
 @inline(__always)
 internal func HMAC(key: KeyData, message: AuthenticationMessage) -> AuthenticationData {
@@ -60,4 +60,3 @@ internal extension AES {
         try self.init(key: Array(key), blockMode: CBC(iv: Array(iv.data)), padding: .pkcs7)
     }
 }
-*/

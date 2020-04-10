@@ -8,15 +8,9 @@
 import Foundation
 
 /// Power Source Device
-public struct PowerSource: EnergyDeviceProtocol, Equatable, Hashable {
+public struct PowerSource: Codable, Equatable, Hashable {
     
     public static var deviceType: EnergyDeviceType { return .powerSource }
-    
-    /// Device identifier.
-    public let identifier: UUID
-    
-    /// Accessory name.
-    public let name: String
     
     /// Voltage system compatible with its accessories.
     public let voltage: VoltageSystem
@@ -32,18 +26,6 @@ public struct PowerSource: EnergyDeviceProtocol, Equatable, Hashable {
 }
 
 // MARK: - Supporting Types
-
-public protocol PowerSourceProtocol: EnergyDeviceProtocol {
-    
-    /// Category of the power source.
-    static var powerSourceType: PowerSourceType { get }
-    
-    /// Output active power
-    var outputActivePower: UInt16 { get }
-    
-    /// Output load percent.
-    var outputLoadPercent: UInt8 { get }
-}
 
 /// Power Source Category
 public enum PowerSourceType: UInt8, Codable {
@@ -61,7 +43,7 @@ public extension PowerSource {
         /// PV Input current for battery.
         ///
         /// The units is A.
-        public var solarInputCurrent: UInt
+        public var solarInputCurrent: UInt16
         
         /// PV Input voltage
         ///
@@ -76,17 +58,17 @@ public extension PowerSource {
         /// Battery charging current
         ///
         /// The units is A.
-        public var batteryChargingCurrent: UInt
+        public var batteryChargingCurrent: UInt16
         
         /// Battery discharge current
         ///
         /// The units is A.
-        public var batteryDischargeCurrent: UInt
+        public var batteryDischargeCurrent: UInt16
         
         /// Battery capacity
         ///
         /// The units is %.
-        public var batteryCapacity: UInt
+        public var batteryCapacity: UInt8
         
         /// AC output voltage
         ///

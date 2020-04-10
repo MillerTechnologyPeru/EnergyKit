@@ -79,25 +79,16 @@ internal extension CentralProtocol {
         let dataNotification: ((Data) -> ())?
         
         if let notification = notification {
-            
             dataNotification = { (data) in
-                
                 let response: ErrorValue<T>
-                
                 if let value = T.init(data: data) {
-                    
                     response = .value(value)
-                    
                 } else {
-                    
                     response = .error(GATTError.invalidData(data))
                 }
-                
                 notification(response)
             }
-            
         } else {
-            
             dataNotification = nil
         }
         
@@ -135,13 +126,11 @@ internal struct Timeout {
     let timeout: TimeInterval
     
     var end: Date {
-        
         return start + timeout
     }
     
     init(start: Date = Date(),
          timeout: TimeInterval) {
-        
         self.start = start
         self.timeout = timeout
     }
@@ -150,13 +139,9 @@ internal struct Timeout {
     func timeRemaining(for date: Date = Date()) throws -> TimeInterval {
         
         let remaining = end.timeIntervalSince(date)
-        
         if remaining > 0 {
-            
             return remaining
-            
         } else {
-            
             throw CentralError.timeout
         }
     }

@@ -8,15 +8,9 @@
 import Foundation
 
 /// Powered accessory that consumes energy.
-public struct Accessory: EnergyDeviceProtocol, Codable, Equatable, Hashable {
+public struct Accessory: Codable, Equatable, Hashable {
     
     public static var deviceType: EnergyDeviceType { return .accessory }
-    
-    /// Device identifier.
-    public let identifier: UUID
-    
-    /// Accessory name.
-    public let name: String
     
     /// Voltage system compatible with the accessory
     public let voltage: VoltageSystem

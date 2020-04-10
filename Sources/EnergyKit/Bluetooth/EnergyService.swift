@@ -81,14 +81,14 @@ public extension EnergyService {
     
     struct DeviceName: GATTProfileCharacteristic {
         
-        public static let uuid = BluetoothUUID(rawValue: "A3B6C75A-7C19-4A20-BD1A-ED07059BD51E")!
+        public static let uuid = BluetoothUUID(rawValue: "E2966BF0-5215-46E8-BD92-ABFF342C3C30")!
         
         public static let service: GATTProfileService.Type = EnergyService.self
         
         public let name: String
         
         public init(name: String) {
-            assert(name.utf8.count < 256, "String too long")
+            assert(name.utf8.count <= 256, "String too long")
             self.name = name
         }
         
