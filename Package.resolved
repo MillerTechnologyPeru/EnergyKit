@@ -11,6 +11,15 @@
         }
       },
       {
+        "package": "CryptoSwift",
+        "repositoryURL": "https://github.com/krzyzanowskim/CryptoSwift",
+        "state": {
+          "branch": "master",
+          "revision": "39f08ac5269361a50c08ce1e2f41989bfc4b1ec8",
+          "version": null
+        }
+      },
+      {
         "package": "GATT",
         "repositoryURL": "https://github.com/PureSwift/GATT.git",
         "state": {
@@ -25,6 +34,15 @@
         "state": {
           "branch": "master",
           "revision": "5f39ec93512b9159e9d9be894fd14fbb09ce4eb4",
+          "version": null
+        }
+      },
+      {
+        "package": "SwiftyGPIO",
+        "repositoryURL": "https://github.com/uraimo/SwiftyGPIO.git",
+        "state": {
+          "branch": "master",
+          "revision": "9809ccab783a62ee607d9992ad0a87cb05531ef6",
           "version": null
         }
       },

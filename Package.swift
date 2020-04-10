@@ -25,7 +25,15 @@ let package = Package(
         .package(
             url: "https://github.com/PureSwift/GATT.git",
             .branch("master")
-        )
+        ),
+        .package(
+            url: "https://github.com/krzyzanowskim/CryptoSwift",
+            .branch("master")
+        ),
+        .package(
+            url: "https://github.com/uraimo/SwiftyGPIO.git",
+            .branch("master")
+        ),
     ],
     targets: [
         .target(
@@ -34,6 +42,7 @@ let package = Package(
                 "Bluetooth",
                 "GATT",
                 "TLVCoding",
+                "CryptoSwift",
                 "MPPSolar"
             ]
         ),
