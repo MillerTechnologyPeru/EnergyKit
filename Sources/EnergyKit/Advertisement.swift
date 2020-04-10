@@ -8,7 +8,6 @@
 import Foundation
 import Bluetooth
 
-
 #if os(macOS) || os(Linux)
 
 public extension BluetoothHostControllerInterface {
