@@ -10,8 +10,18 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/MillerTechnologyPeru/MPPSolar.git", .branch("master")),
-        .package(url: "https://github.com/PureSwift/TLVCoding.git", .branch("master"))
+        .package(
+            url: "https://github.com/MillerTechnologyPeru/MPPSolar.git",
+            .branch("master")
+        ),
+        .package(
+            url: "https://github.com/PureSwift/TLVCoding.git",
+            .branch("master")
+        ),
+        .package(
+            url: "https://github.com/PureSwift/GATT.git",
+            .branch("master")
+        )
     ],
     targets: [
         .target(

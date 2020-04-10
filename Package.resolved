@@ -2,6 +2,24 @@
   "object": {
     "pins": [
       {
+        "package": "Bluetooth",
+        "repositoryURL": "https://github.com/PureSwift/Bluetooth.git",
+        "state": {
+          "branch": "master",
+          "revision": "e6299aae7a3047b2683a39e58f2e79f307b2e05a",
+          "version": null
+        }
+      },
+      {
+        "package": "GATT",
+        "repositoryURL": "https://github.com/PureSwift/GATT.git",
+        "state": {
+          "branch": "master",
+          "revision": "955a19b2030e08666154f2ee52d7955f56bb6ff5",
+          "version": null
+        }
+      },
+      {
         "package": "MPPSolar",
         "repositoryURL": "https://github.com/MillerTechnologyPeru/MPPSolar.git",
         "state": {
