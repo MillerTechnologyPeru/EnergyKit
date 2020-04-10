@@ -19,6 +19,10 @@ let package = Package(
             .branch("master")
         ),
         .package(
+            url: "https://github.com/PureSwift/Bluetooth.git",
+            .branch("master")
+        ),
+        .package(
             url: "https://github.com/PureSwift/GATT.git",
             .branch("master")
         )
@@ -27,6 +31,8 @@ let package = Package(
         .target(
             name: "EnergyKit",
             dependencies: [
+                "Bluetooth",
+                "GATT",
                 "TLVCoding",
                 "MPPSolar"
             ]
