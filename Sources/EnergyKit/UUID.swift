@@ -1,17 +1,16 @@
 //
 //  UUID.swift
-//  CoreLock
 //
-//  Created by Alsey Coleman Miller on 9/16/19.
-//  Copyright © 2019 ColemanCDA. All rights reserved.
+//
+//  Created by Alsey Coleman Miller on 4/9/20.
 //
 
 import Foundation
 
 public extension UUID {
     
-    /// iBeacon Lock Notification
-    static var lockNotificationBeacon: UUID {
-        return UUID(uuidString: "F6AC86F3-A97D-4FA7-8668-C8ECFD1E538D")!
+    /// iBeacon Energy Notification
+    static var energyNotificationBeacon: UUID {
+        return UUID(uuidString: "DE52C966-5723-4003-A5ED-6CDD2C9ED68C")!
     }
 }
