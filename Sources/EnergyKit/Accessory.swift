@@ -38,7 +38,7 @@ public extension Accessory {
     enum Category: UInt8, Codable {
         
         /// Standard wall outlet
-        enum outlet     = 0x01
+        case outlet     = 0x01
         
         /// Lighting
         case light      = 0x02
