@@ -1,0 +1,25 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "MPPSolar",
+        "repositoryURL": "https://github.com/MillerTechnologyPeru/MPPSolar.git",
+        "state": {
+          "branch": "master",
+          "revision": "5f39ec93512b9159e9d9be894fd14fbb09ce4eb4",
+          "version": null
+        }
+      },
+      {
+        "package": "TLVCoding",
+        "repositoryURL": "https://github.com/PureSwift/TLVCoding.git",
+        "state": {
+          "branch": "master",
+          "revision": "0ecdc45f61d98e3adcc55011f84335861fa5599d",
+          "version": null
+        }
+      }
+    ]
+  },
+  "version": 1
+}
