@@ -56,12 +56,10 @@ public struct AuthenticationData: Equatable {
     }
     
     public init(key: KeyData, message: AuthenticationMessage) {
-        
         self = HMAC(key: key, message: message)
     }
     
     public func isAuthenticated(with key: KeyData, message: AuthenticationMessage) -> Bool {
-        
         return data == AuthenticationData(key: key, message: message).data
     }
 }
