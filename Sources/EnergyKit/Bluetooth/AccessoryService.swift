@@ -1,19 +1,20 @@
 //
-//  PowerSourceService.swift
+//  AccessoryService.swift
 //  
 //
 //  Created by Alsey Coleman Miller on 4/10/20.
 //
+
 
 import Foundation
 import Bluetooth
 import GATT
 import TLVCoding
 
-/// GATT Power Source Service
-public struct PowerSourceService: GATTProfileService {
+/// GATT Energy Accessory Service
+public struct AccessoryService: GATTProfileService {
     
-    public static let uuid = BluetoothUUID(rawValue: "9565C26D-E717-4524-A38E-8DADA4C04909")!
+    public static let uuid = BluetoothUUID(rawValue: "CFC0F8A3-DDF5-4D30-9CA3-1701C5E9064E")!
     
     public static let isPrimary: Bool = true
     
@@ -23,11 +24,11 @@ public struct PowerSourceService: GATTProfileService {
     ]
 }
 
-public extension PowerSourceService {
+public extension AccessoryService {
     
     struct Request: TLVCharacteristic, Codable, Equatable {
         
-        public static let uuid = BluetoothUUID(rawValue: "C430EFCE-604D-48F3-A241-5F7B781E4F90")!
+        public static let uuid = BluetoothUUID(rawValue: "D28123FD-AB48-45E1-939E-D0D5F7CB0DD8")!
         
         public static let service: GATTProfileService.Type = PowerSourceService.self
         
@@ -49,7 +50,7 @@ public extension PowerSourceService {
     
     struct Response: TLVCharacteristic, Codable, Equatable {
         
-        public static let uuid = BluetoothUUID(rawValue: "6AFA0D36-4567-4486-BEE5-E14A622B805F")!
+        public static let uuid = BluetoothUUID(rawValue: "C7330D59-E08B-4B54-9639-5DC2121EC439")!
         
         public static let service: GATTProfileService.Type = PowerSourceService.self
         
@@ -65,16 +66,16 @@ public extension PowerSourceService {
             try encryptedData.encode(to: encoder)
         }
         
-        public init(_ value: PowerSource, sharedSecret: KeyData) throws {
+        public init(_ value: Accessory, sharedSecret: KeyData) throws {
             
             let valueData = try Swift.type(of: self).encoder.encode(value)
             self.encryptedData = try EncryptedData(encrypt: valueData, with: sharedSecret)
         }
         
-        public func decrypt(with sharedSecret: KeyData) throws -> PowerSource {
+        public func decrypt(with sharedSecret: KeyData) throws -> Accessory {
             
             let data = try encryptedData.decrypt(with: sharedSecret)
-            guard let value = try? Swift.type(of: self).decoder.decode(PowerSource.self, from: data)
+            guard let value = try? Swift.type(of: self).decoder.decode(Accessory.self, from: data)
                 else { throw GATTError.invalidData(data) }
             return value
         }
