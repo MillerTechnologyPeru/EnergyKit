@@ -8,7 +8,7 @@
 import Foundation
 
 /// Power Source Device
-public final class PowerSource: Device, Codable, Equatable, Hashable {
+public struct PowerSource: Device, Codable, Equatable, Hashable {
     
     public static var deviceKind: DeviceKind { return .powerSource }
     

@@ -5,6 +5,8 @@
 //  Created by Alsey Coleman Miller on 4/9/20.
 //
 
+import Foundation
+
 /// Energy device
 public protocol Device {
     

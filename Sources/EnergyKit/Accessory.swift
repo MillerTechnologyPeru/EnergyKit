@@ -29,6 +29,9 @@ public struct Accessory: Device, Codable, Equatable, Hashable {
     
     /// Watts currently consuming.
     public var watts: UInt16
+    
+    /// Whether the device is on. 
+    public var isOn: Bool
 }
 
 // MARK: - Supporting Types
