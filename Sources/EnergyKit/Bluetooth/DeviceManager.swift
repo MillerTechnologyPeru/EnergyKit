@@ -1,8 +1,8 @@
 //
 //  DeviceManager.swift
-//  
 //
-//  Created by Alsey Coleman Miller on 4/9/20.
+//
+//  Created by Alsey Coleman Miller on 4/10/20.
 //
 
 import Foundation
@@ -72,26 +72,30 @@ public final class EnergyDeviceManager <Central: CentralProtocol> {
         }
     }
     
-    /// Read the device information characteristic.
+    /// Read the device information characteristics.
     public func readInformation(for peripheral: Peripheral,
-                                timeout: TimeInterval = .gattDefaultTimeout) throws -> EnergyDevice {
+                                timeout: TimeInterval = .gattDefaultTimeout) throws -> EnergyService {
         
         log?("Read information for \(peripheral)")
         
         let timeout = Timeout(timeout: timeout)
-        
         return try central.device(for: peripheral, timeout: timeout) { [unowned self] (cache) in
-            
             return try self.readInformation(cache: cache, timeout: timeout)
         }
     }
     
     internal func readInformation(cache: GATTConnectionCache<Peripheral>,
-                                  timeout: Timeout) throws -> EnergyDevice {
+                                  timeout: Timeout) throws -> EnergyService {
         
-        let lockService = try central.read(EnergyService.self, for: cache, timeout: timeout)
+        let identifier = try central.read(EnergyService.Identifier.self, for: cache, timeout: timeout)
+        let deviceType = try central.read(EnergyService.DeviceType.self, for: cache, timeout: timeout)
+        let deviceName = try central.read(EnergyService.DeviceName.self, for: cache, timeout: timeout)
         
-        
+        return EnergyService(
+            identifier: identifier.identifier,
+            type: deviceType.type,
+            name: deviceName.name
+        )
     }
 }
 

@@ -8,7 +8,7 @@
 import Foundation
 
 /// Power Source Device
-public struct PowerSource: EnergyDeviceProtocol, Codable, Equatable, Hashable {
+public struct PowerSource: EnergyDeviceProtocol, Equatable, Hashable {
     
     public static var deviceType: EnergyDeviceType { return .powerSource }
     
@@ -22,7 +22,7 @@ public struct PowerSource: EnergyDeviceProtocol, Codable, Equatable, Hashable {
     public let voltage: VoltageSystem
     
     /// Category of the power source.
-    public let category: Category
+    public let type: PowerSourceType
     
     /// Output active power
     public var outputActivePower: UInt16
@@ -36,7 +36,7 @@ public struct PowerSource: EnergyDeviceProtocol, Codable, Equatable, Hashable {
 public protocol PowerSourceProtocol: EnergyDeviceProtocol {
     
     /// Category of the power source.
-    static var category: PowerSource.Category { get }
+    static var powerSourceType: PowerSourceType { get }
     
     /// Output active power
     var outputActivePower: UInt16 { get }
@@ -45,16 +45,12 @@ public protocol PowerSourceProtocol: EnergyDeviceProtocol {
     var outputLoadPercent: UInt8 { get }
 }
 
-public extension PowerSource {
+/// Power Source Category
+public enum PowerSourceType: UInt8, Codable {
     
-    /// Power Source Category
-    enum Category: UInt8, Codable {
-        
-        case solar      = 0x01
-        case generator  = 0x02
-        case grid       = 0x03
-        case hybrid     = 0x04
-    }
+    case solar      = 0x01
+    case generator  = 0x02
+    case grid       = 0x03
 }
 
 public extension PowerSource {

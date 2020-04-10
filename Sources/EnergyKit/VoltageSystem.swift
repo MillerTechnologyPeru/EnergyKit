@@ -14,3 +14,18 @@ public enum VoltageSystem: UInt16, Codable {
     case ac220      = 220
     case ac360      = 360
 }
+
+// MARK: - CustomStringConvertible
+
+extension VoltageSystem: CustomStringConvertible {
+    
+    public var description: String {
+        switch self {
+        case .dc12: return "12VDC"
+        case .dc24: return "12VDC"
+        case .ac110: return "110VAC"
+        case .ac220: return "220VAC"
+        case .ac360: return "360VAC"
+        }
+    }
+}
