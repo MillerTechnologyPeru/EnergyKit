@@ -30,6 +30,16 @@ public extension Automation {
 
 public extension Automation {
     
+    struct Action: Codable, Equatable, Hashable {
+        
+        public let device: UUID
+        
+        public let state: DeviceState
+    }
+}
+
+public extension Automation {
+    
     enum Value: Equatable, Hashable {
         
         case state(DeviceState)
@@ -114,12 +124,7 @@ public extension Automation {
     }
 }
 
-public extension Automation {
+public protocol AutomationEvaluatable {
     
-    struct Action: Codable, Equatable, Hashable {
-        
-        public let device: UUID
-        
-        public let state: DeviceState
-    }
+    func evaluate(_ value: Automation.Value) -> Bool
 }

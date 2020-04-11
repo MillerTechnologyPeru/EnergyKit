@@ -164,3 +164,57 @@ public extension PowerSource {
         public var loadPercent: UInt8
     }
 }
+
+// MARK: - Automation
+
+extension PowerSource: AutomationEvaluatable {
+    
+    public func evaluate(_ value: Automation.Value) -> Bool {
+        switch self {
+        case let .solar(powerSource):
+            return powerSource.evaluate(value)
+        case let .generator(powerSource):
+            return powerSource.evaluate(value)
+        }
+    }
+}
+
+extension PowerSource.Solar: AutomationEvaluatable {
+    
+    public func evaluate(_ value: Automation.Value) -> Bool {
+        switch value {
+        case .state(.off):
+            return state == .off
+        case .state(.on):
+            return state == .on
+        case .state(.lowEnergyMode):
+            return false
+        case let .activePower(value):
+            return value == activePower
+        case let .loadPercent(value):
+            return value == loadPercent
+        case let .batteryCapacity(value):
+            return value == batteryCapacity
+        }
+    }
+}
+
+extension PowerSource.Generator: AutomationEvaluatable {
+    
+    public func evaluate(_ value: Automation.Value) -> Bool {
+        switch value {
+        case .state(.off):
+            return state == .off
+        case .state(.on):
+            return state == .on
+        case .state(.lowEnergyMode):
+            return false
+        case let .activePower(value):
+            return value == activePower
+        case let .loadPercent(value):
+            return value == loadPercent
+        case .batteryCapacity:
+            return false
+        }
+    }
+}
