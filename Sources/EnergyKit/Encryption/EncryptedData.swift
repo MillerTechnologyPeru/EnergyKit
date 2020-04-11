@@ -21,7 +21,7 @@ public struct EncryptedData: Equatable, Codable {
 
 public extension EncryptedData {
     
-    init(encrypt data: Data, with key: KeyData) throws {
+    init(encrypt data: Data, with key: PrivateKey) throws {
         
         do {
             let (encryptedData, iv) = try EnergyKit.encrypt(key: key.data, data: data)
@@ -33,7 +33,7 @@ public extension EncryptedData {
         catch { throw AuthenticationError.encryptionError(error) }
     }
     
-    func decrypt(with key: KeyData) throws -> Data {
+    func decrypt(with key: PrivateKey) throws -> Data {
         
         guard authentication.isAuthenticated(with: key)
             else { throw AuthenticationError.invalidAuthentication }

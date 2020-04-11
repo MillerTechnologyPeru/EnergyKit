@@ -20,12 +20,6 @@ public struct EnergyService: GATTProfileService {
         DeviceType.self,
         DeviceName.self,
     ]
-    
-    public let identifier: UUID
-    
-    public let type: EnergyDeviceType
-    
-    public let name: String
 }
 
 public extension EnergyService {

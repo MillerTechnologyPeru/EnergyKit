@@ -7,6 +7,19 @@
 
 import Foundation
 
+/// Energy Device
+public struct EnergyDevice: Codable, Equatable, Hashable {
+    
+    /// Device identifier.
+    public let identifier: UUID
+    
+    /// Device type.
+    public let type: EnergyDeviceType
+    
+    /// Device name.
+    public let name: String
+}
+
 /// Device Kind
 public enum EnergyDeviceType: UInt8, Codable {
     

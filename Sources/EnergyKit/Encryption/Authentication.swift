@@ -13,14 +13,14 @@ public struct Authentication: Equatable, Codable {
     
     public let signedData: AuthenticationData
     
-    public init(key: KeyData,
+    public init(key: PrivateKey,
                 message: AuthenticationMessage = AuthenticationMessage()) {
         
         self.message = message
         self.signedData = AuthenticationData(key: key, message: message)
     }
     
-    public func isAuthenticated(with key: KeyData) -> Bool {
+    public func isAuthenticated(with key: PrivateKey) -> Bool {
         return signedData.isAuthenticated(with: key, message: message)
     }
 }
@@ -55,11 +55,11 @@ public struct AuthenticationData: Equatable {
         self.data = data
     }
     
-    public init(key: KeyData, message: AuthenticationMessage) {
+    public init(key: PrivateKey, message: AuthenticationMessage) {
         self = HMAC(key: key, message: message)
     }
     
-    public func isAuthenticated(with key: KeyData, message: AuthenticationMessage) -> Bool {
+    public func isAuthenticated(with key: PrivateKey, message: AuthenticationMessage) -> Bool {
         return data == AuthenticationData(key: key, message: message).data
     }
 }

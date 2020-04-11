@@ -45,8 +45,8 @@ public extension SecureData where Self: Encodable {
     }
 }
 
-/// A lock's key used for unlocking and actions.
-public struct KeyData: SecureData, Codable {
+/// Private key.
+public struct PrivateKey: SecureData, Codable {
     
     public static let length = 256 / 8 // 32
     

@@ -10,5 +10,9 @@ import Foundation
 /// Energy Controller
 public final class Controller {
     
+    public let configuration: EnergyConfiguration
     
+    public init(configuration: EnergyConfiguration) {
+        self.configuration = configuration
+    }
 }

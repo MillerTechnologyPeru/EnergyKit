@@ -73,9 +73,10 @@ public final class EnergyDeviceManager <Central: CentralProtocol> {
     }
     
     /// Read the device information characteristics.
-    public func readInformation(for peripheral: Peripheral,
-                                timeout: TimeInterval = .gattDefaultTimeout) throws -> EnergyService {
+    public func readInformation(for peripheral: EnergyPeripheral<Central>,
+                                timeout: TimeInterval = .gattDefaultTimeout) throws -> EnergyDevice {
         
+        let peripheral = peripheral.scanData.peripheral
         log?("Read information for \(peripheral)")
         
         let timeout = Timeout(timeout: timeout)
@@ -85,13 +86,13 @@ public final class EnergyDeviceManager <Central: CentralProtocol> {
     }
     
     internal func readInformation(cache: GATTConnectionCache<Peripheral>,
-                                  timeout: Timeout) throws -> EnergyService {
+                                  timeout: Timeout) throws -> EnergyDevice {
         
         let identifier = try central.read(EnergyService.Identifier.self, for: cache, timeout: timeout)
         let deviceType = try central.read(EnergyService.DeviceType.self, for: cache, timeout: timeout)
         let deviceName = try central.read(EnergyService.DeviceName.self, for: cache, timeout: timeout)
         
-        return EnergyService(
+        return EnergyDevice(
             identifier: identifier.identifier,
             type: deviceType.type,
             name: deviceName.name

@@ -21,7 +21,7 @@ internal let HMACSize = 64
 
 /// Performs HMAC with the specified key and message.
 @inline(__always)
-internal func HMAC(key: KeyData, message: AuthenticationMessage) -> AuthenticationData {
+internal func HMAC(key: PrivateKey, message: AuthenticationMessage) -> AuthenticationData {
     
     let encoder = TLVEncoder.energy
     let messageData = try! encoder.encode(message)

@@ -7,38 +7,101 @@
 
 import Foundation
 
-/// Power Source Device
-public struct PowerSource: Codable, Equatable, Hashable {
+/// Power Source
+public enum PowerSource: Equatable, Hashable {
     
-    public static var deviceType: EnergyDeviceType { return .powerSource }
+    /// Solar energy power source
+    case solar(Solar)
     
-    /// Voltage system compatible with its accessories.
-    public let voltage: VoltageSystem
+    /// Electric generator power source
+    case generator(Generator)
+}
+
+// MARK: - Codable
+
+extension PowerSource: Codable {
     
-    /// Category of the power source.
-    public let type: PowerSourceType
+    internal enum CodingKeys: String, CodingKey {
+        case type
+        case powerSource
+    }
     
-    /// Output active power
-    public var outputActivePower: UInt16
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let type = try container.decode(PowerSourceType.self, forKey: .type)
+        switch type {
+        case .solar:
+            let powerSource = try container.decode(Solar.self, forKey: .powerSource)
+            self = .solar(powerSource)
+        case .generator:
+            let powerSource = try container.decode(Generator.self, forKey: .powerSource)
+            self = .generator(powerSource)
+        }
+    }
     
-    /// Output load percent. 
-    public var outputLoadPercent: UInt8
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        switch self {
+        case let .solar(powerSource):
+            try container.encode(powerSource, forKey: .powerSource)
+            try container.encode(PowerSourceType.solar, forKey: .type)
+        case let .generator(powerSource):
+            try container.encode(powerSource, forKey: .powerSource)
+            try container.encode(PowerSourceType.generator, forKey: .type)
+        }
+    }
 }
 
 // MARK: - Supporting Types
+
+public protocol PowerSourceProtocol {
+    
+    /// Power Source
+    static var powerSourceType: PowerSourceType { get }
+    
+    /// Voltage system compatible with its accessories.
+    var outputVoltage: VoltageSystem { get }
+    
+    /// Output active power
+    var outputActivePower: UInt16 { get }
+    
+    /// Output load percent.
+    var outputLoadPercent: UInt8 { get }
+}
 
 /// Power Source Category
 public enum PowerSourceType: UInt8, Codable {
     
     case solar      = 0x01
     case generator  = 0x02
-    case grid       = 0x03
+    //case grid       = 0x03
+}
+
+public extension PowerSource {
+    
+    enum Action: UInt8, Codable {
+        
+        case enable
+        case disable
+        
+    }
 }
 
 public extension PowerSource {
     
     /// Solar Power Source
-    struct Solar: Codable, Equatable, Hashable {
+    struct Solar: PowerSourceProtocol, Codable, Equatable, Hashable {
+        
+        public static let powerSourceType: PowerSourceType = .solar
+        
+        /// Voltage system compatible with its accessories.
+        public let outputVoltage: VoltageSystem
+        
+        /// Output active power
+        public var outputActivePower: UInt16
+        
+        /// Output load percent.
+        public var outputLoadPercent: UInt8
         
         /// PV Input current for battery.
         ///
@@ -69,19 +132,23 @@ public extension PowerSource {
         ///
         /// The units is %.
         public var batteryCapacity: UInt8
-        
-        /// AC output voltage
-        ///
-        /// The units is V.
-        public var outputVoltage: Float
     }
 }
 
 public extension PowerSource {
 
     /// Generator Power Source
-    struct Generator: Codable, Equatable, Hashable {
+    struct Generator: PowerSourceProtocol, Codable, Equatable, Hashable {
         
+        public static let powerSourceType: PowerSourceType = .generator
         
+        /// Voltage system compatible with its accessories.
+        public let outputVoltage: VoltageSystem
+        
+        /// Output active power
+        public var outputActivePower: UInt16
+        
+        /// Output load percent.
+        public var outputLoadPercent: UInt8
     }
 }
