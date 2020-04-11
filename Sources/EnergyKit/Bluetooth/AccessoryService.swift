@@ -103,16 +103,16 @@ public extension AccessoryService {
             try encryptedData.encode(to: encoder)
         }
         
-        public init(_ value: Accessory.Action, sharedSecret: PrivateKey) throws {
+        public init(_ value: Accessory.State, sharedSecret: PrivateKey) throws {
             
             let valueData = try Swift.type(of: self).encoder.encode(value)
             self.encryptedData = try EncryptedData(encrypt: valueData, with: sharedSecret)
         }
         
-        public func decrypt(with sharedSecret: PrivateKey) throws -> Accessory.Action {
+        public func decrypt(with sharedSecret: PrivateKey) throws -> Accessory.State {
             
             let data = try encryptedData.decrypt(with: sharedSecret)
-            guard let value = try? Swift.type(of: self).decoder.decode(Accessory.Action.self, from: data)
+            guard let value = try? Swift.type(of: self).decoder.decode(Accessory.State.self, from: data)
                 else { throw GATTError.invalidData(data) }
             return value
         }

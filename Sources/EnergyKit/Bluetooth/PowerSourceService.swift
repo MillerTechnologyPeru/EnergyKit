@@ -18,8 +18,10 @@ public struct PowerSourceService: GATTProfileService {
     public static let isPrimary: Bool = true
     
     public static let characteristics: [GATTProfileCharacteristic.Type] = [
-        Request.self,
-        Response.self
+        InformationRequest.self,
+        InformationResponse.self,
+        ActionRequest.self,
+        ActionResponse.self
     ]
 }
 
@@ -100,16 +102,16 @@ public extension PowerSourceService {
             try encryptedData.encode(to: encoder)
         }
         
-        public init(_ value: Accessory.Action, sharedSecret: PrivateKey) throws {
+        public init(_ value: PowerSource.State, sharedSecret: PrivateKey) throws {
             
             let valueData = try Swift.type(of: self).encoder.encode(value)
             self.encryptedData = try EncryptedData(encrypt: valueData, with: sharedSecret)
         }
         
-        public func decrypt(with sharedSecret: PrivateKey) throws -> Accessory.Action {
+        public func decrypt(with sharedSecret: PrivateKey) throws -> PowerSource.State {
             
             let data = try encryptedData.decrypt(with: sharedSecret)
-            guard let value = try? Swift.type(of: self).decoder.decode(Accessory.Action.self, from: data)
+            guard let value = try? Swift.type(of: self).decoder.decode(PowerSource.State.self, from: data)
                 else { throw GATTError.invalidData(data) }
             return value
         }
@@ -121,7 +123,7 @@ public extension PowerSourceService {
         
         public static let service: GATTProfileService.Type = PowerSourceService.self
         
-        public static let properties: Bluetooth.BitMaskOptionSet<GATT.Characteristic.Property> = [.read]
+        public static let properties: Bluetooth.BitMaskOptionSet<GATT.Characteristic.Property> = [.notify]
         
         public let encryptedData: EncryptedData
         

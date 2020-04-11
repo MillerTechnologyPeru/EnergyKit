@@ -18,11 +18,11 @@ public struct Accessory: Codable, Equatable, Hashable {
     /// Category of the accessory.
     public let type: AccessoryType
     
-    /// Watts currently consuming.
-    public var watts: UInt16
+    /// Accessory state.
+    public var state: State
     
-    /// Whether the device is on. 
-    public var isOn: Bool
+    /// Watts currently consuming.
+    public var activePower: UInt16
 }
 
 // MARK: - Supporting Types
@@ -40,4 +40,19 @@ public enum AccessoryType: UInt8, Codable {
     
     /// Utility (e.g. water pump)
     case utility    = 0x04
+}
+
+public extension Accessory {
+    
+    enum State: UInt8, Codable {
+        
+        /// Disable the accessory
+        case off            = 0x00
+        
+        /// Enable the accessory
+        case on             = 0x01
+        
+        /// Keep the accessory enabled but in low power mode (e.g. dim lights).
+        case lowEnergyMode  = 0x02
+    }
 }

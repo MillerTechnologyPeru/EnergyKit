@@ -60,13 +60,16 @@ public protocol PowerSourceProtocol {
     static var powerSourceType: PowerSourceType { get }
     
     /// Voltage system compatible with its accessories.
-    var outputVoltage: VoltageSystem { get }
+    var voltage: VoltageSystem { get }
+    
+    /// Power source state.
+    var state: PowerSource.State { get }
     
     /// Output active power
-    var outputActivePower: UInt16 { get }
+    var activePower: UInt16 { get }
     
     /// Output load percent.
-    var outputLoadPercent: UInt8 { get }
+    var loadPercent: UInt8 { get }
 }
 
 /// Power Source Category
@@ -79,11 +82,14 @@ public enum PowerSourceType: UInt8, Codable {
 
 public extension PowerSource {
     
-    enum Action: UInt8, Codable {
+    /// Power Source State
+    enum State: UInt8, Codable {
         
-        case enable
-        case disable
+        /// Power source is disabled
+        case off            = 0x00
         
+        /// Power source is enabled
+        case on             = 0x01
     }
 }
 
@@ -95,13 +101,16 @@ public extension PowerSource {
         public static let powerSourceType: PowerSourceType = .solar
         
         /// Voltage system compatible with its accessories.
-        public let outputVoltage: VoltageSystem
+        public let voltage: VoltageSystem
+        
+        /// Power source state
+        public var state: PowerSource.State
         
         /// Output active power
-        public var outputActivePower: UInt16
+        public var activePower: UInt16
         
         /// Output load percent.
-        public var outputLoadPercent: UInt8
+        public var loadPercent: UInt8
         
         /// PV Input current for battery.
         ///
@@ -143,12 +152,15 @@ public extension PowerSource {
         public static let powerSourceType: PowerSourceType = .generator
         
         /// Voltage system compatible with its accessories.
-        public let outputVoltage: VoltageSystem
+        public let voltage: VoltageSystem
+        
+        /// Power source state
+        public var state: PowerSource.State
         
         /// Output active power
-        public var outputActivePower: UInt16
+        public var activePower: UInt16
         
         /// Output load percent.
-        public var outputLoadPercent: UInt8
+        public var loadPercent: UInt8
     }
 }

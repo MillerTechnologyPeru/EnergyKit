@@ -15,4 +15,8 @@ public final class Controller {
     public init(configuration: EnergyConfiguration) {
         self.configuration = configuration
     }
+    
+    public private(set) var powerSources = [UUID: PowerSource]()
+    
+    public private(set) var accessories = [UUID: Accessory]()
 }
