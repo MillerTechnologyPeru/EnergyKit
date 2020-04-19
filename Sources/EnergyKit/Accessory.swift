@@ -56,24 +56,3 @@ public extension Accessory {
         case lowEnergyMode  = 0x02
     }
 }
-
-// MARK: - Automation
-
-extension Accessory: AutomationEvaluatable {
-    
-    public func evaluate(_ value: Automation.Value) -> Bool {
-        switch value {
-        case .state(.off):
-            return state == .off
-        case .state(.on):
-            return state == .on
-        case .state(.lowEnergyMode):
-            return state == .lowEnergyMode
-        case let .activePower(value):
-            return value == activePower
-        case .loadPercent,
-             .batteryCapacity:
-            return false
-        }
-    }
-}
