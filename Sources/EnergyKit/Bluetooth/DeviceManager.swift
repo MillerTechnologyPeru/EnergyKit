@@ -133,6 +133,48 @@ public final class EnergyDeviceManager <Central: CentralProtocol> {
         )
     }
     
+    public func setAccessoryState(_ state: Accessory.State,
+                                  for peripheral: EnergyPeripheral<Central>,
+                                  privateKey: PrivateKey,
+                                  timeout: TimeInterval = .gattDefaultTimeout) throws {
+        
+        let peripheral = peripheral.scanData.peripheral
+        log?("Set accessory state \(state) for \(peripheral)")
+        
+        let result = try notificationResponse(
+            write: try! AccessoryService.ActionRequest(state, privateKey: privateKey),
+            notify: AccessoryService.ActionResponse.self,
+            for: peripheral,
+            with: privateKey,
+            timeout: timeout
+        )
+        
+        if let error = GATTError(result) {
+            throw error
+        }
+    }
+    
+    public func setPowerSourceState(_ state: PowerSource.State,
+                                    for peripheral: EnergyPeripheral<Central>,
+                                    privateKey: PrivateKey,
+                                    timeout: TimeInterval = .gattDefaultTimeout) throws {
+        
+        let peripheral = peripheral.scanData.peripheral
+        log?("Set power source state \(state) for \(peripheral)")
+        
+        let result = try notificationResponse(
+            write: try! PowerSourceService.ActionRequest(state, privateKey: privateKey),
+            notify: PowerSourceService.ActionResponse.self,
+            for: peripheral,
+            with: privateKey,
+            timeout: timeout
+        )
+        
+        if let error = GATTError(result) {
+            throw error
+        }
+    }
+    
     internal func notificationResponse <Write, Notify> (
         write: @autoclosure () -> (Write),
         notify: Notify.Type,

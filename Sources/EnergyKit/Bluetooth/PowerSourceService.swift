@@ -98,15 +98,15 @@ public extension PowerSourceService {
             try encryptedData.encode(to: encoder)
         }
         
-        public init(_ value: PowerSource.State, sharedSecret: PrivateKey) throws {
+        public init(_ value: PowerSource.State, privateKey: PrivateKey) throws {
             
             let valueData = try Swift.type(of: self).encoder.encode(value)
-            self.encryptedData = try EncryptedData(encrypt: valueData, with: sharedSecret)
+            self.encryptedData = try EncryptedData(encrypt: valueData, with: privateKey)
         }
         
-        public func decrypt(with sharedSecret: PrivateKey) throws -> PowerSource.State {
+        public func decrypt(with privateKey: PrivateKey) throws -> PowerSource.State {
             
-            let data = try encryptedData.decrypt(with: sharedSecret)
+            let data = try encryptedData.decrypt(with: privateKey)
             guard let value = try? Swift.type(of: self).decoder.decode(PowerSource.State.self, from: data)
                 else { throw GATTError.invalidData(data) }
             return value
@@ -122,7 +122,7 @@ public extension PowerSourceService {
         
         public static let uuid = BluetoothUUID(rawValue: "C7330D59-E08B-4B54-9639-5DC2121EC439")!
         
-        public static let service: GATTProfileService.Type = PowerSourceService.self
+        public static let service: GATTProfileService.Type = AccessoryService.self
         
         public static let properties: Bluetooth.BitMaskOptionSet<GATT.Characteristic.Property> = [.notify]
         

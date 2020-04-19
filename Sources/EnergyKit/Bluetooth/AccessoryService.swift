@@ -119,43 +119,20 @@ public extension AccessoryService {
 
 public extension AccessoryService {
     
-    struct ActionResponse: TLVCharacteristic, Codable, Equatable {
+    struct ActionResponse: GATTEncryptedNotification, Equatable {
         
         public static let uuid = BluetoothUUID(rawValue: "C7330D59-E08B-4B54-9639-5DC2121EC439")!
         
-        public static let service: GATTProfileService.Type = PowerSourceService.self
+        public static let service: GATTProfileService.Type = AccessoryService.self
         
-        public static let properties: Bluetooth.BitMaskOptionSet<GATT.Characteristic.Property> = [.read]
+        public static let properties: Bluetooth.BitMaskOptionSet<GATT.Characteristic.Property> = [.notify]
         
-        public let encryptedData: EncryptedData
+        public typealias Notification = GATTErrorNotification
         
-        public init(from decoder: Decoder) throws {
-            self.encryptedData = try EncryptedData(from: decoder)
-        }
+        public let chunk: Chunk
         
-        public func encode(to encoder: Encoder) throws {
-            try encryptedData.encode(to: encoder)
-        }
-        
-        public init(_ value: Value, sharedSecret: PrivateKey) throws {
-            
-            let valueData = try Swift.type(of: self).encoder.encode(value)
-            self.encryptedData = try EncryptedData(encrypt: valueData, with: sharedSecret)
-        }
-        
-        public func decrypt(with sharedSecret: PrivateKey) throws -> Value {
-            
-            let data = try encryptedData.decrypt(with: sharedSecret)
-            guard let value = try? Swift.type(of: self).decoder.decode(Value.self, from: data)
-                else { throw GATTError.invalidData(data) }
-            return value
-        }
-        
-        public struct Value: Codable, Equatable {
-            
-            public let success: Bool
-            
-            public let errorDescription: String?
+        public init(chunk: Chunk) {
+            self.chunk = chunk
         }
     }
 }

@@ -17,6 +17,25 @@ public enum PowerSource: Equatable, Hashable {
     case generator(Generator)
 }
 
+public extension PowerSource {
+    
+    var type: PowerSourceType {
+        switch self {
+        case .solar: return .solar
+        case .generator: return .generator
+        }
+    }
+    
+    var state: PowerSource.State {
+        switch self {
+        case let .solar(powerSource):
+            return powerSource.state
+        case let .generator(powerSource):
+            return powerSource.state
+        }
+    }
+}
+
 // MARK: - Codable
 
 extension PowerSource: Codable {

@@ -16,6 +16,9 @@ public enum EnergyGATTError: Error {
     
     /// Could not complete GATT operation. 
     case couldNotComplete
+    
+    /// Result returned an error response.
+    case errorResponse(String)
 }
 
 internal typealias GATTError = EnergyGATTError

@@ -43,3 +43,15 @@ extension GATTErrorNotification: Codable {
         }
     }
 }
+
+internal extension GATTError {
+    
+    init?(_ notification: GATTErrorNotification) {
+        switch notification {
+        case .success:
+            return nil
+        case let .failure(failure):
+            self = .errorResponse(failure)
+        }
+    }
+}
