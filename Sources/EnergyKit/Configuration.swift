@@ -16,9 +16,12 @@ public struct EnergyConfiguration: Codable, Equatable, Hashable {
     
     public var automation: [Automation]
     
+    public var powerSources: [UUID: Set<UUID>]
+    
     public init() {
         self.devices = []
         self.privateKeys = [:]
         self.automation = []
+        self.powerSources = [:]
     }
 }
