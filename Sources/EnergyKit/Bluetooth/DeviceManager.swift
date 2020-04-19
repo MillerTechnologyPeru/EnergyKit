@@ -107,23 +107,92 @@ public final class EnergyDeviceManager <Central: CentralProtocol> {
         let peripheral = peripheral.scanData.peripheral
         log?("Read accessory information for \(peripheral)")
         
+        return try notificationResponse(
+            write: AccessoryService.InformationRequest(authentication: Authentication(key: privateKey)),
+            notify: AccessoryService.InformationResponse.self,
+            for: peripheral,
+            with: privateKey,
+            timeout: timeout
+        )
+    }
+    
+    /// Read the power source information characteristic.
+    public func readPowerSource(for peripheral: EnergyPeripheral<Central>,
+                                privateKey: PrivateKey,
+                                timeout: TimeInterval = .gattDefaultTimeout) throws -> PowerSource {
+        
+        let peripheral = peripheral.scanData.peripheral
+        log?("Read power source information for \(peripheral)")
+        
+        return try notificationResponse(
+            write: PowerSourceService.InformationRequest(authentication: Authentication(key: privateKey)),
+            notify: PowerSourceService.InformationResponse.self,
+            for: peripheral,
+            with: privateKey,
+            timeout: timeout
+        )
+    }
+    
+    internal func notificationResponse <Write, Notify> (
+        write: @autoclosure () -> (Write),
+        notify: Notify.Type,
+        for peripheral: Central.Peripheral,
+        with privateKey: PrivateKey,
+        timeout: TimeInterval) throws -> Notify.Notification where Write: GATTCharacteristic, Notify: GATTEncryptedNotification {
+        
         let timeout = Timeout(timeout: timeout)
         return try central.device(for: peripheral, timeout: timeout) { [unowned self] (cache) in
-            return try self.readAccessory(cache: cache, privateKey: privateKey, timeout: timeout)
+            let semaphore = Semaphore(timeout: timeout.timeout)
+            var chunks = [Chunk]()
+            chunks.reserveCapacity(2)
+            var notificationValue: Notify.Notification?
+            // notify
+            try self.central.notify(Notify.self, for: cache, timeout: timeout) { (response) in
+                switch response {
+                case let .error(error):
+                    semaphore.stopWaiting(error)
+                case let .value(value):
+                    let chunk = value.chunk
+                    self.log?("Received chunk \(chunks.count + 1) (\(chunk.bytes.count) bytes)")
+                    chunks.append(chunk)
+                    assert(chunks.isEmpty == false)
+                    guard chunks.length >= chunk.total
+                        else { return } // wait for more chunks
+                    do {
+                        notificationValue = try Notify.from(chunks: chunks, privateKey: privateKey)
+                        semaphore.stopWaiting()
+                    } catch {
+                        semaphore.stopWaiting(error)
+                    }
+                }
+            }
+            
+            // Write data to characteristic
+            try self.central.write(write(), for: cache, timeout: timeout)
+            
+            // handle disconnect
+            self.central.didDisconnect = {
+                guard $0 == cache.peripheral else { return }
+                semaphore.stopWaiting(CentralError.disconnected)
+            }
+            
+            /// Wait for all pending notifications
+            while notificationValue == nil {
+                try semaphore.wait() // wait for notification
+            }
+            
+            // ignore disconnection
+            central.didDisconnect = nil
+            
+            // stop notifications
+            try self.central.notify(Notify.self, for: cache, timeout: Timeout(timeout: timeout.timeout), notification: nil)
+            
+            guard let notification = notificationValue
+                else { assertionFailure(); throw CentralError.timeout }
+            
+            return notification
         }
     }
-    
-    internal func readAccessory(cache: GATTConnectionCache<Peripheral>,
-                                privateKey: PrivateKey,
-                                timeout: Timeout) throws -> Accessory {
-        
-        let request = AccessoryService.InformationRequest(authentication: Authentication(key: privateKey))
-        try central.write(request, for: cache, timeout: timeout)
-        let response = try central.read(AccessoryService.InformationResponse.self, for: cache, timeout: timeout)
-        return try response.decrypt(with: privateKey)
-    }
-    
-    
 }
 
 // MARK: - Supporting Types
@@ -142,5 +211,42 @@ public struct EnergyPeripheral <Central: CentralProtocol>: Equatable {
             else { return nil }
         
         self.scanData = scanData
+    }
+}
+
+internal final class Semaphore {
+    
+    let semaphore: DispatchSemaphore
+    let timeout: TimeInterval
+    private(set) var error: Swift.Error?
+    
+    init(timeout: TimeInterval) {
+        
+        self.timeout = timeout
+        self.semaphore = DispatchSemaphore(value: 0)
+        self.error = nil
+    }
+    
+    func wait() throws {
+        
+        self.error = nil
+        let dispatchTime: DispatchTime = .now() + timeout
+        
+        let success = semaphore.wait(timeout: dispatchTime) == .success
+        
+        if let error = self.error {
+            throw error
+        }
+        
+        guard success else { throw CentralError.timeout }
+    }
+    
+    func stopWaiting(_ error: Swift.Error? = nil) {
+        
+        // store error
+        self.error = error
+        
+        // stop blocking
+        semaphore.signal()
     }
 }

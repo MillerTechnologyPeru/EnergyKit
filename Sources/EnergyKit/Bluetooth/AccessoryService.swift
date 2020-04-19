@@ -26,6 +26,8 @@ public struct AccessoryService: GATTProfileService {
     ]
 }
 
+// MARK: - InformationRequest
+
 public extension AccessoryService {
     
     struct InformationRequest: TLVCharacteristic, Codable, Equatable {
@@ -51,39 +53,33 @@ public extension AccessoryService {
             try authentication.encode(to: encoder)
         }
     }
+}
+
+// MARK: - InformationResponse
+
+public extension AccessoryService {
     
-    struct InformationResponse: TLVCharacteristic, Codable, Equatable {
+    struct InformationResponse: GATTEncryptedNotification, Equatable {
         
         public static let uuid = BluetoothUUID(rawValue: "C7330D59-E08B-4B54-9639-5DC2121EC439")!
         
-        public static let service: GATTProfileService.Type = PowerSourceService.self
+        public static let service: GATTProfileService.Type = AccessoryService.self
         
-        public static let properties: Bluetooth.BitMaskOptionSet<GATT.Characteristic.Property> = [.read]
+        public static let properties: Bluetooth.BitMaskOptionSet<GATT.Characteristic.Property> = [.notify]
         
-        public let encryptedData: EncryptedData
+        public typealias Notification = Accessory
         
-        public init(from decoder: Decoder) throws {
-            self.encryptedData = try EncryptedData(from: decoder)
-        }
+        public let chunk: Chunk
         
-        public func encode(to encoder: Encoder) throws {
-            try encryptedData.encode(to: encoder)
-        }
-        
-        public init(_ value: Accessory, sharedSecret: PrivateKey) throws {
-            
-            let valueData = try Swift.type(of: self).encoder.encode(value)
-            self.encryptedData = try EncryptedData(encrypt: valueData, with: sharedSecret)
-        }
-        
-        public func decrypt(with sharedSecret: PrivateKey) throws -> Accessory {
-            
-            let data = try encryptedData.decrypt(with: sharedSecret)
-            guard let value = try? Swift.type(of: self).decoder.decode(Accessory.self, from: data)
-                else { throw GATTError.invalidData(data) }
-            return value
+        public init(chunk: Chunk) {
+            self.chunk = chunk
         }
     }
+}
+
+// MARK: - ActionRequest
+
+public extension AccessoryService {
     
     struct ActionRequest: TLVCharacteristic, Codable, Equatable {
         
@@ -103,20 +99,25 @@ public extension AccessoryService {
             try encryptedData.encode(to: encoder)
         }
         
-        public init(_ value: Accessory.State, sharedSecret: PrivateKey) throws {
+        public init(_ value: Accessory.State, privateKey: PrivateKey) throws {
             
             let valueData = try Swift.type(of: self).encoder.encode(value)
-            self.encryptedData = try EncryptedData(encrypt: valueData, with: sharedSecret)
+            self.encryptedData = try EncryptedData(encrypt: valueData, with: privateKey)
         }
         
-        public func decrypt(with sharedSecret: PrivateKey) throws -> Accessory.State {
+        public func decrypt(with privateKey: PrivateKey) throws -> Accessory.State {
             
-            let data = try encryptedData.decrypt(with: sharedSecret)
+            let data = try encryptedData.decrypt(with: privateKey)
             guard let value = try? Swift.type(of: self).decoder.decode(Accessory.State.self, from: data)
                 else { throw GATTError.invalidData(data) }
             return value
         }
     }
+}
+
+// MARK: - ActionResponse
+
+public extension AccessoryService {
     
     struct ActionResponse: TLVCharacteristic, Codable, Equatable {
         

@@ -39,9 +39,9 @@ internal extension CentralProtocol {
     }
     
     func write <T: GATTCharacteristic> (_ characteristic: T,
-                                               for cache: GATTConnectionCache<Peripheral>,
-                                               withResponse response: Bool = true,
-                                               timeout: Timeout) throws {
+                                        for cache: GATTConnectionCache<Peripheral>,
+                                        withResponse response: Bool = true,
+                                        timeout: Timeout) throws {
         
         guard let foundCharacteristic = cache.characteristics.first(where: { $0.uuid == T.uuid })
             else { throw CentralError.invalidAttribute(T.uuid) }

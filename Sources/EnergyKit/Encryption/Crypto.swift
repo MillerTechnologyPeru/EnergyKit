@@ -13,7 +13,6 @@ import TLVCoding
 internal func random(_ size: Int) -> Data {
     
     let bytes = AES.randomIV(size)
-    
     return Data(bytes)
 }
 
