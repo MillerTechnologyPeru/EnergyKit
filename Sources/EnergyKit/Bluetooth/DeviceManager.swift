@@ -44,10 +44,10 @@ public final class EnergyDeviceManager <Central: CentralProtocol> {
         try central.scan(duration: duration, filterDuplicates: filterDuplicates) { (scanData) in
             
             // filter peripheral
-            guard let device = EnergyPeripheral<Central>(scanData)
+            guard let peripheral = EnergyPeripheral<Central>(scanData)
                 else { return }
             
-            event(device)
+            event(peripheral)
         }
     }
     
@@ -65,10 +65,10 @@ public final class EnergyDeviceManager <Central: CentralProtocol> {
         try self.central.scan(filterDuplicates: filterDuplicates) { (scanData) in
             
             // filter peripheral
-            guard let Energy = EnergyPeripheral<Central>(scanData)
+            guard let peripheral = EnergyPeripheral<Central>(scanData)
                 else { return }
             
-            event(Energy)
+            event(peripheral)
         }
     }
     
@@ -98,6 +98,32 @@ public final class EnergyDeviceManager <Central: CentralProtocol> {
             name: deviceName.name
         )
     }
+    
+    /// Read the accessory information characteristic.
+    public func readAccessory(for peripheral: EnergyPeripheral<Central>,
+                              privateKey: PrivateKey,
+                              timeout: TimeInterval = .gattDefaultTimeout) throws -> Accessory {
+        
+        let peripheral = peripheral.scanData.peripheral
+        log?("Read accessory information for \(peripheral)")
+        
+        let timeout = Timeout(timeout: timeout)
+        return try central.device(for: peripheral, timeout: timeout) { [unowned self] (cache) in
+            return try self.readAccessory(cache: cache, privateKey: privateKey, timeout: timeout)
+        }
+    }
+    
+    internal func readAccessory(cache: GATTConnectionCache<Peripheral>,
+                                privateKey: PrivateKey,
+                                timeout: Timeout) throws -> Accessory {
+        
+        let request = AccessoryService.InformationRequest(authentication: Authentication(key: privateKey))
+        try central.write(request, for: cache, timeout: timeout)
+        let response = try central.read(AccessoryService.InformationResponse.self, for: cache, timeout: timeout)
+        return try response.decrypt(with: privateKey)
+    }
+    
+    
 }
 
 // MARK: - Supporting Types
