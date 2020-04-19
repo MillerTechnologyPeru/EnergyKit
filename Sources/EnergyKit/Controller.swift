@@ -9,6 +9,7 @@ import Foundation
 import Bluetooth
 import GATT
 import Dispatch
+import Predicate
 
 /// Energy Controller
 public final class EnergyController <Central: CentralProtocol> {
@@ -27,9 +28,7 @@ public final class EnergyController <Central: CentralProtocol> {
     
     private var devices = [EnergyDevice: EnergyPeripheral<Central>]()
     
-    private var accessories = [UUID: Accessory]()
-    
-    private var powerSources = [UUID: PowerSource]()
+    private var deviceCache = [UUID: DeviceState]()
     
     // MARK: - Initialization
     
@@ -76,8 +75,7 @@ public final class EnergyController <Central: CentralProtocol> {
     
     internal func readEncryptedState() {
         
-        accessories.removeAll(keepingCapacity: true)
-        powerSources.removeAll(keepingCapacity: true)
+        deviceCache.removeAll(keepingCapacity: true)
         for (device, peripheral) in devices {
             do {
                 switch device.type {
@@ -85,18 +83,60 @@ public final class EnergyController <Central: CentralProtocol> {
                     continue
                 case .accessory:
                     guard let privateKey = configuration.privateKeys[device.identifier]
-                        else { self.log?("Error: Missing private key for \(device.type) \(device.identifier)") }
+                        else { self.log?("Error: Missing private key for \(device.type) \(device.identifier)"); continue }
                     let accessory = try deviceManager.readAccessory(for: peripheral, privateKey: privateKey)
-                    accessories[device.identifier] = accessory
+                    deviceCache[device.identifier] = .accessory(accessory)
                 case .powerSource:
                     guard let privateKey = configuration.privateKeys[device.identifier]
-                        else { self.log?("Error: Missing private key for \(device.type) \(device.identifier)") }
+                        else { self.log?("Error: Missing private key for \(device.type) \(device.identifier)"); continue }
                     let powerSource = try deviceManager.readPowerSource(for: peripheral, privateKey: privateKey)
-                    powerSources[device.identifier] = powerSource
+                    deviceCache[device.identifier] = .powerSource(powerSource)
                 }
             } catch {
                 self.log?("Error: Unable to read encryped information for \(device.type) \(device.identifier)")
             }
+        }
+    }
+    
+    internal func processAutomations() {
+        
+        for automation in configuration.automation {
+            
+            self.log?("Evaluating automation \(automation.identifier)")
+            
+            // evaluate condition
+            guard let deviceState = deviceCache[automation.condition.device] else {
+                self.log?("Error: Missing state for device \(automation.condition.device)")
+                continue
+            }
+            
+            do { try deviceState.evaluate(with: automation.condition.predicate) }
+            catch { self.log?("Error: Invalid predicate \(automation.condition.predicate.description) (\(error))") }
+            
+            
+        }
+    }
+}
+
+// MARK: - Supporting Types
+
+internal extension EnergyController {
+    
+    enum DeviceState: Equatable {
+        
+        case accessory(Accessory)
+        case powerSource(PowerSource)
+    }
+}
+
+extension EnergyController.DeviceState: PredicateEvaluatable {
+    
+    func evaluate(with predicate: Predicate) throws -> Bool {
+        switch self {
+        case let .accessory(accessory):
+            return try accessory.evaluate(with: predicate)
+        case let .powerSource(powerSource):
+            return try powerSource.evaluate(with: predicate)
         }
     }
 }

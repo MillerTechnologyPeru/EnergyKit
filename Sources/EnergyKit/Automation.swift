@@ -10,6 +10,8 @@ import Predicate
 
 public struct Automation: Codable, Equatable, Hashable {
     
+    // MARK: - Properties
+    
     public let identifier: UUID
     
     public let name: String
@@ -17,7 +19,22 @@ public struct Automation: Codable, Equatable, Hashable {
     public let condition: Condition
     
     public let action: Action
+    
+    // MARK: - Initialization
+    
+    public init(identifier: UUID,
+                name: String,
+                condition: Condition,
+                action: Action) {
+        
+        self.identifier = identifier
+        self.name = name
+        self.condition = condition
+        self.action = action
+    }
 }
+
+// MARK: - Supporting Types
 
 public extension Automation {
     
@@ -26,6 +43,11 @@ public extension Automation {
         public let device: UUID
         
         public let predicate: Predicate
+        
+        public init(device: UUID, predicate: Predicate) {
+            self.device = device
+            self.predicate = predicate
+        }
     }
 }
 
@@ -36,6 +58,11 @@ public extension Automation {
         public let device: UUID
         
         public let state: DeviceState
+        
+        public init(device: UUID, state: DeviceState) {
+            self.device = device
+            self.state = state
+        }
     }
 }
 
