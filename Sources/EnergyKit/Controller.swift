@@ -28,7 +28,7 @@ public final class EnergyController <Central: CentralProtocol> {
     
     private var devices = [EnergyDevice: EnergyPeripheral<Central>]()
     
-    private var deviceCache = [UUID: DeviceState]()
+    private var deviceCache = [UUID: ControllerDeviceState]()
     
     // MARK: - Initialization
     
@@ -110,26 +110,103 @@ public final class EnergyController <Central: CentralProtocol> {
                 continue
             }
             
-            do { try deviceState.evaluate(with: automation.condition.predicate) }
-            catch { self.log?("Error: Invalid predicate \(automation.condition.predicate.description) (\(error))") }
+            let isConditionValid: Bool
+            do { isConditionValid = try deviceState.evaluate(with: automation.condition.predicate) }
+            catch {
+                self.log?("Error: Invalid predicate \(automation.condition.predicate.description) (\(error))")
+                isConditionValid = false
+            }
             
+            guard isConditionValid else { continue }
             
+            guard let targetState = deviceCache[automation.action.device]?.state else {
+                self.log?("Error: Missing state for device \(automation.condition.device)")
+                continue
+            }
+            
+            guard targetState != automation.action.state else {
+                self.log?("Will not change state for automation")
+                continue
+            }
+            
+            // apply action
+            guard let (targetDevice, targetPeripheral) = devices.first(where: { $0.key.identifier == automation.action.device }) else {
+                self.log?("Error: Automation target device \(automation.action.device) is not in range")
+                continue
+            }
+            
+            guard let targetPrivateKey = configuration.privateKeys[targetDevice.identifier] else {
+                self.log?("Error: Missing private key for \(targetDevice.type) \(targetDevice.identifier)")
+                continue
+            }
+            
+            do {
+                switch targetDevice.type {
+                case .controller:
+                    assertionFailure("Invalid type")
+                    self.log?("Error: Unable to apply action \(automation.action.state) to device \(automation.action.device)")
+                    continue
+                case .accessory:
+                    let state: Accessory.State
+                    switch automation.action.state {
+                    case .off:
+                        state = .off
+                    case .on:
+                        state = .on
+                    case .lowEnergyMode:
+                        state = .lowEnergyMode
+                    }
+                    try deviceManager.setAccessoryState(state, for: targetPeripheral, privateKey: targetPrivateKey)
+                case .powerSource:
+                    let state: PowerSource.State
+                    switch automation.action.state {
+                    case .off:
+                        state = .off
+                    case .on:
+                        state = .on
+                    case .lowEnergyMode:
+                        assertionFailure()
+                        self.log?("Error: Invalid action \(automation.action.state) for \(targetDevice.type) \(automation.action.device)")
+                        continue
+                    }
+                    try deviceManager.setPowerSourceState(state, for: targetPeripheral, privateKey: targetPrivateKey)
+                }
+            } catch {
+                self.log?("Error: Unable to apply action \(automation.action.state) to device \(automation.action.device)")
+                continue
+            }
         }
     }
 }
 
 // MARK: - Supporting Types
 
-internal extension EnergyController {
+internal enum ControllerDeviceState: Equatable {
     
-    enum DeviceState: Equatable {
-        
-        case accessory(Accessory)
-        case powerSource(PowerSource)
+    case accessory(Accessory)
+    case powerSource(PowerSource)
+}
+
+extension ControllerDeviceState {
+    
+    var state: Automation.DeviceState {
+        switch self {
+        case let .accessory(accessory):
+            switch accessory.state {
+            case .off: return .off
+            case .on: return .on
+            case .lowEnergyMode: return .lowEnergyMode
+            }
+        case let .powerSource(powerSource):
+            switch powerSource.state {
+            case .off: return .off
+            case .on: return .on
+            }
+        }
     }
 }
 
-extension EnergyController.DeviceState: PredicateEvaluatable {
+extension ControllerDeviceState: PredicateEvaluatable {
     
     func evaluate(with predicate: Predicate) throws -> Bool {
         switch self {
