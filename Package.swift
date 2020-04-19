@@ -11,10 +11,6 @@ let package = Package(
     ],
     dependencies: [
         .package(
-            url: "https://github.com/MillerTechnologyPeru/MPPSolar.git",
-            .branch("master")
-        ),
-        .package(
             url: "https://github.com/PureSwift/TLVCoding.git",
             .branch("master")
         ),
@@ -27,11 +23,31 @@ let package = Package(
             .branch("master")
         ),
         .package(
+            url: "https://github.com/PureSwift/Predicate.git",
+            .branch("master")
+        ),
+        .package(
             url: "https://github.com/krzyzanowskim/CryptoSwift",
             .branch("master")
         ),
         .package(
             url: "https://github.com/uraimo/SwiftyGPIO.git",
+            .branch("master")
+        ),
+        .package(
+            url: "https://github.com/apple/swift-argument-parser",
+            .upToNextMinor(from: "0.0.1")
+        ),
+        .package(
+            url: "https://github.com/PureSwift/BluetoothLinux.git",
+            .branch("master")
+        ),
+        .package(
+            url: "https://github.com/PureSwift/BluetoothDarwin.git",
+            .branch("master")
+        ),
+        .package(
+            url: "https://github.com/MillerTechnologyPeru/MPPSolar.git",
             .branch("master")
         ),
     ],
@@ -43,7 +59,41 @@ let package = Package(
                 "GATT",
                 "TLVCoding",
                 "CryptoSwift",
-                "MPPSolar"
+                "Predicate"
+            ]
+        ),
+        .target(
+            name: "energykit-mppsolar",
+            dependencies: [
+                "EnergyKit",
+                "MPPSolar",
+                "ArgumentParser",
+                "GATT",
+                "DarwinGATT",
+                "BluetoothLinux",
+                "BluetoothDarwin"
+            ]
+        ),
+        .target(
+            name: "energykit-accessory",
+            dependencies: [
+                "EnergyKit",
+                "ArgumentParser",
+                "GATT",
+                "DarwinGATT",
+                "BluetoothLinux",
+                "BluetoothDarwin"
+            ]
+        ),
+        .target(
+            name: "energykit-controller",
+            dependencies: [
+                "EnergyKit",
+                "ArgumentParser",
+                "GATT",
+                "DarwinGATT",
+                "BluetoothLinux",
+                "BluetoothDarwin"
             ]
         ),
         .testTarget(

@@ -11,6 +11,24 @@
         }
       },
       {
+        "package": "BluetoothDarwin",
+        "repositoryURL": "https://github.com/PureSwift/BluetoothDarwin.git",
+        "state": {
+          "branch": "master",
+          "revision": "d6c1eb2c2433efdf621aa8fc2d11d271261ca752",
+          "version": null
+        }
+      },
+      {
+        "package": "BluetoothLinux",
+        "repositoryURL": "https://github.com/PureSwift/BluetoothLinux.git",
+        "state": {
+          "branch": "master",
+          "revision": "52078ccc6928c8f3e7712bbda052f4a927a2e5ad",
+          "version": null
+        }
+      },
+      {
         "package": "CryptoSwift",
         "repositoryURL": "https://github.com/krzyzanowskim/CryptoSwift",
         "state": {
@@ -35,6 +53,24 @@
           "branch": "master",
           "revision": "5f39ec93512b9159e9d9be894fd14fbb09ce4eb4",
           "version": null
+        }
+      },
+      {
+        "package": "Predicate",
+        "repositoryURL": "https://github.com/PureSwift/Predicate.git",
+        "state": {
+          "branch": "master",
+          "revision": "b73a38e2ad204da095e3cca9069c10dc11d3c768",
+          "version": null
+        }
+      },
+      {
+        "package": "swift-argument-parser",
+        "repositoryURL": "https://github.com/apple/swift-argument-parser",
+        "state": {
+          "branch": null,
+          "revision": "9f04d1ff1afbccd02279338a2c91e5f27c45e93a",
+          "version": "0.0.5"
         }
       },
       {
