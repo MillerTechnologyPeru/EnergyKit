@@ -12,7 +12,7 @@ public struct Automation: Codable, Equatable, Hashable {
     
     // MARK: - Properties
     
-    public let identifier: UUID
+    public let id: UUID
     
     public let name: String
     
@@ -22,17 +22,21 @@ public struct Automation: Codable, Equatable, Hashable {
     
     // MARK: - Initialization
     
-    public init(identifier: UUID,
+    public init(id: UUID,
                 name: String,
                 condition: Condition,
                 action: Action) {
         
-        self.identifier = identifier
+        self.id = id
         self.name = name
         self.condition = condition
         self.action = action
     }
 }
+
+// MARK: - Identifiable
+
+extension Automation: Identifiable { }
 
 // MARK: - Supporting Types
 
