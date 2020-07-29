@@ -11,7 +11,7 @@ import Foundation
 public struct EnergyDevice: Codable, Equatable, Hashable {
     
     /// Device identifier.
-    public let identifier: UUID
+    public let id: UUID
     
     /// Device type.
     public let type: EnergyDeviceType
@@ -19,6 +19,12 @@ public struct EnergyDevice: Codable, Equatable, Hashable {
     /// Device name.
     public let name: String
 }
+
+// MARK: - Identifiable
+
+extension EnergyDevice: Identifiable { }
+
+// MARK: - Supporting Types
 
 /// Device Kind
 public enum EnergyDeviceType: UInt8, Codable {
